@@ -15,10 +15,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   final newPasswordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  Future<void> cambiarPassword() async {
+  Future<void> changePassword() async {
     if (_formKey.currentState!.validate()) {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:3000/api/auth/change-password'),
+        Uri.parse('http://localhost:3000/api/auth/change-password'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'email': emailController.text,
@@ -62,7 +62,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               validator: (value) => value!.isEmpty ? 'Campo requerido' : null,
             ),
             SizedBox(height: 20),
-            ElevatedButton(onPressed: cambiarPassword, child: Text('Actualizar Contraseña')),
+            ElevatedButton(onPressed: changePassword, child: Text('Actualizar Contraseña')),
           ]),
         ),
       ),

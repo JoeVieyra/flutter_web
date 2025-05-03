@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_web/services/file_service.dart';
 import 'package:intl/intl.dart';
 
 class FileUploadScreen extends StatefulWidget {
@@ -12,31 +13,58 @@ class FileUploadScreen extends StatefulWidget {
 class _FileUploadScreenState extends State<FileUploadScreen> {
   final List<Map<String, String>> _archivos = [];
 
-  Future<void> _pickFile() async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['pdf', 'xlsx'],
-    );
+  @override
+  void initState() {
+    super.initState();
+    _loadFiles(); // <- Aquí se llama para cargar archivos al iniciar la pantalla
+  }
 
-    if (result != null && result.files.single.name.isNotEmpty) {
-      final archivo = result.files.single;
-
-      final extension = archivo.extension ?? 'desconocido';
-      final nombre = archivo.name;
-      final fecha = DateFormat('dd/MM/yyyy – HH:mm').format(DateTime.now());
-
+  Future<void> _loadFiles() async {
+    try {
+      final files = await FileService.fetchUploadedFiles();
       setState(() {
-        _archivos.add({
-          'nombre': nombre,
-          'extension': extension,
-          'fecha': fecha,
-        });
+        _archivos.clear();
+        _archivos.addAll(
+          files.map((archivo) => {
+            'nombre': archivo['nombre'],
+            'extension': archivo['extension'],
+            'fecha': archivo['fechaCreacion'] != null
+            ? DateFormat('dd/MM/yyyy – HH:mm').format(DateTime.parse(archivo['fechaCreacion']))
+             : 'Sin fecha',
+          }),
+        );
       });
-
-      // Aquí puedes hacer POST al backend si lo necesitas
-      // await FileService.uploadFileData(nombre, extension, fecha);
+    } catch (e) {
+      print('Error al cargar archivos: $e');
     }
   }
+
+
+
+  Future<void> _pickFile() async {
+  final result = await FilePicker.platform.pickFiles(
+    type: FileType.custom,
+    allowedExtensions: ['pdf', 'xlsx'],
+  );
+
+  if (result != null && result.files.single.bytes != null) {
+    final archivo = result.files.single;
+
+    final success = await FileService.uploadFile(archivo);
+
+    if (success) {
+      print('Archivo subido con éxito');
+      // Aquí puedes actualizar tu UI si es necesario
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al subir archivo')),
+      );
+    }
+  }
+
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -77,4 +105,5 @@ class _FileUploadScreenState extends State<FileUploadScreen> {
       ),
     );
   }
-}
+
+  }
