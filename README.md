@@ -42,5 +42,4 @@ git clone https://github.com/JoeVieyra/flutter_web
 cd flutter_web
 flutter pub get
 
-
-![alt text](<Captura desde 2025-05-04 13-57-38.png>)
+Captura desde 2025-05-04 13-57-38.png
