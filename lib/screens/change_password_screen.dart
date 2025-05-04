@@ -2,8 +2,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
-
-
 class ChangePasswordScreen extends StatefulWidget {
   @override
   _ChangePasswordScreenState createState() => _ChangePasswordScreenState();
@@ -28,10 +26,14 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       );
 
       if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Contraseña actualizada')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('✅ Contraseña actualizada con éxito')),
+        );
       } else {
         final message = jsonDecode(response.body)['message'];
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $message')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('❌ Error: $message')),
+        );
       }
     }
   }
@@ -39,31 +41,76 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Cambiar Contraseña')),
-      body: Padding(
-        padding: EdgeInsets.all(24),
-        child: Form(
-          key: _formKey,
-          child: ListView(children: [
-            TextFormField(
-              controller: emailController,
-              decoration: InputDecoration(labelText: 'Correo'),
-              validator: (value) => value!.isEmpty ? 'Campo requerido' : null,
+      appBar: AppBar(title: const Text('Cambiar Contraseña')),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Card(
+            elevation: 6,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.lock_reset,
+                        size: 48, color: Theme.of(context).primaryColor),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Actualizar Contraseña',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 24),
+
+                    TextFormField(
+                      controller: emailController,
+                      decoration: const InputDecoration(
+                        labelText: 'Correo',
+                        prefixIcon: Icon(Icons.email),
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (value) => value!.isEmpty ? 'Campo requerido' : null,
+                    ),
+                    const SizedBox(height: 16),
+
+                    TextFormField(
+                      controller: rfcController,
+                      decoration: const InputDecoration(
+                        labelText: 'RFC',
+                        prefixIcon: Icon(Icons.badge),
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (value) => value!.isEmpty ? 'Campo requerido' : null,
+                    ),
+                    const SizedBox(height: 16),
+
+                    TextFormField(
+                      controller: newPasswordController,
+                      obscureText: true,
+                      decoration: const InputDecoration(
+                        labelText: 'Nueva Contraseña',
+                        prefixIcon: Icon(Icons.lock),
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (value) => value!.isEmpty ? 'Campo requerido' : null,
+                    ),
+                    const SizedBox(height: 24),
+
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        icon: const Icon(Icons.save),
+                        label: const Text('Actualizar Contraseña'),
+                        onPressed: changePassword,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
-            TextFormField(
-              controller: rfcController,
-              decoration: InputDecoration(labelText: 'RFC'),
-              validator: (value) => value!.isEmpty ? 'Campo requerido' : null,
-            ),
-            TextFormField(
-              controller: newPasswordController,
-              decoration: InputDecoration(labelText: 'Nueva Contraseña'),
-              obscureText: true,
-              validator: (value) => value!.isEmpty ? 'Campo requerido' : null,
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(onPressed: changePassword, child: Text('Actualizar Contraseña')),
-          ]),
+          ),
         ),
       ),
     );

@@ -28,16 +28,16 @@ class _EmpleadosScreenState extends State<EmpleadosScreen> {
     });
   }
 
-void confirmarEliminacion(Empleado empleado) {
+  void confirmarEliminacion(Empleado empleado) {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text('Eliminar empleado'),
-        content: Text('¿Estás seguro de que deseas eliminar a ${empleado.nombre}?'),
+        title: const Text('Eliminar empleado'),
+        content: Text('¿Deseas eliminar a ${empleado.nombre}?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('Cancelar'),
+            child: const Text('Cancelar'),
           ),
           TextButton(
             onPressed: () async {
@@ -47,20 +47,18 @@ void confirmarEliminacion(Empleado empleado) {
                 Navigator.of(context).pop();
               }
             },
-            child: Text('Eliminar', style: TextStyle(color: Colors.red)),
+            child: const Text('Eliminar', style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
     );
   }
 
-
-
   void filtrarEmpleados(String query) {
     final resultado = empleados.where((empleado) {
       return empleado.nombre.toLowerCase().contains(query.toLowerCase()) ||
-             empleado.curp.toLowerCase().contains(query.toLowerCase()) ||
-             empleado.rfc.toLowerCase().contains(query.toLowerCase());
+          empleado.curp.toLowerCase().contains(query.toLowerCase()) ||
+          empleado.rfc.toLowerCase().contains(query.toLowerCase());
     }).toList();
 
     setState(() {
@@ -76,13 +74,33 @@ void confirmarEliminacion(Empleado empleado) {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text('Editar empleado'),
+        title: const Text('Editar empleado'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextField(controller: nombreController, decoration: InputDecoration(labelText: 'Nombre')),
-            TextField(controller: curpController, decoration: InputDecoration(labelText: 'CURP')),
-            TextField(controller: rfcController, decoration: InputDecoration(labelText: 'RFC')),
+            TextField(
+              controller: nombreController,
+              decoration: const InputDecoration(
+                labelText: 'Nombre',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: curpController,
+              decoration: const InputDecoration(
+                labelText: 'CURP',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: rfcController,
+              decoration: const InputDecoration(
+                labelText: 'RFC',
+                border: OutlineInputBorder(),
+              ),
+            ),
           ],
         ),
         actions: [
@@ -101,11 +119,11 @@ void confirmarEliminacion(Empleado empleado) {
                 Navigator.of(context).pop();
               }
             },
-            child: Text('Guardar'),
+            child: const Text('Guardar'),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('Cancelar'),
+            child: const Text('Cancelar'),
           ),
         ],
       ),
@@ -116,47 +134,58 @@ void confirmarEliminacion(Empleado empleado) {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Empleados'),
+        title: const Text('Empleados'),
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(50),
+          preferredSize: const Size.fromHeight(60),
           child: Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(12.0),
             child: TextField(
               controller: busquedaController,
               onChanged: filtrarEmpleados,
               decoration: InputDecoration(
                 hintText: 'Buscar por nombre, CURP o RFC',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
               ),
             ),
           ),
         ),
       ),
-      body: ListView.builder(
-        itemCount: empleadosFiltrados.length,
-        itemBuilder: (context, index) {
-          final empleado = empleadosFiltrados[index];
-          return ListTile(
-            title: Text(empleado.nombre),
-            subtitle: Text('CURP: ${empleado.curp} | RFC: ${empleado.rfc}'),
-            trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-            IconButton(
-            icon: Icon(Icons.edit),
-            onPressed: () => mostrarDialogoEdicion(empleado),
+      body: empleadosFiltrados.isEmpty
+          ? const Center(child: Text('No se encontraron empleados'))
+          : ListView.builder(
+              padding: const EdgeInsets.all(12),
+              itemCount: empleadosFiltrados.length,
+              itemBuilder: (context, index) {
+                final empleado = empleadosFiltrados[index];
+                return Card(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  elevation: 4,
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  child: ListTile(
+                    title: Text(
+                      empleado.nombre,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text('CURP: ${empleado.curp}\nRFC: ${empleado.rfc}'),
+                    isThreeLine: true,
+                    trailing: Wrap(
+                      spacing: 8,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.edit, color: Colors.blue),
+                          onPressed: () => mostrarDialogoEdicion(empleado),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () => confirmarEliminacion(empleado),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
             ),
-            IconButton(
-      icon: Icon(Icons.delete),
-      onPressed: () => confirmarEliminacion(empleado),
-    ),
-  ],
-),
-
-          );
-        },
-      ),
     );
   }
 }

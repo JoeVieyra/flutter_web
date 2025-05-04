@@ -30,11 +30,12 @@ class AuthService {
   required String email,
   required String password,
   required String nombre,
+  required String rfc,
 }) async {
   final response = await http.post(
     Uri.parse('$baseUrl/login'),
     headers: {'Content-Type': 'application/json'},
-    body: jsonEncode({'nombre':nombre, 'email': email, 'password': password}),
+    body: jsonEncode({'nombre':nombre, 'rfc': rfc, 'email': email, 'password': password}),
   );
 
   print("Status: ${response.statusCode}");
@@ -57,6 +58,8 @@ class AuthService {
       return {
         'success': true,
         'nombre': data['nombre'],
+        'rfc':data['rfc'],
+        'email': data ['email'],
         'message': data['message'],
         'userId': data['userId'],
       };

@@ -3,7 +3,6 @@ import 'package:flutter_web/screens/change_password_screen.dart';
 import 'package:flutter_web/screens/home_screen.dart';
 import 'package:flutter_web/services/auth_service.dart';
 
-
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -13,9 +12,10 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _nombreController = TextEditingController();
   final _correoController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _nombreController = TextEditingController();
+  final _rfcController = TextEditingController();
 
   bool _isLoading = false;
   String _errorMessage = '';
@@ -31,6 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
         nombre: _nombreController.text,
         email: _correoController.text,
         password: _passwordController.text,
+        rfc: _rfcController.text,
       );
 
       setState(() {
@@ -39,11 +40,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (result['success']) {
         Navigator.pushReplacement(
-          // ignore: use_build_context_synchronously
           context,
           MaterialPageRoute(
-            builder: (context) => HomeScreen(nombre: result['nombre']?.toString() ?? ''),
-
+            builder: (_) => HomeScreen(
+              nombre: result['nombre']?.toString() ?? '',
+              rfc: result['rfc'],
+              email: result['email'],
+            ),
           ),
         );
       } else {
@@ -57,49 +60,82 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Iniciar Sesión')),
+      appBar: AppBar(title: const Text('Iniciar Sesión')),
       body: Center(
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(24),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                TextFormField(
-                  controller: _correoController,
-                  decoration: InputDecoration(labelText: 'Correo'),
-                  validator: (value) =>
-                      value!.isEmpty || !value.contains('@') ? 'Correo inválido' : null,
-                ),
-                TextFormField(
-                  controller: _passwordController,
-                  obscureText: true,
-                  decoration: InputDecoration(labelText: 'Contraseña'),
-                  validator: (value) =>
-                      value!.isEmpty ? 'Campo requerido' : null,
-                ),
-                if (_errorMessage.isNotEmpty) ...[
-                  SizedBox(height: 16),
-                  Text(_errorMessage, style: TextStyle(color: Colors.red)),
-                ],
-                SizedBox(height: 20),
-                _isLoading
-                    ? CircularProgressIndicator()
-                    : ElevatedButton(
-                        onPressed: _login,
-                        child: Text('Iniciar Sesión'),
+          padding: const EdgeInsets.all(24.0),
+          child: Card(
+            elevation: 6,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.lock_open, size: 48, color: Theme.of(context).primaryColor),
+                    const SizedBox(height: 16),
+                    Text('Iniciar Sesión',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 24),
+
+                    
+                    TextFormField(
+                      controller: _correoController,
+                      decoration: const InputDecoration(
+                        labelText: 'Correo electrónico',
+                        prefixIcon: Icon(Icons.email),
+                        border: OutlineInputBorder(),
                       ),
-                      SizedBox(height: 20),
-                _isLoading
-                    ? CircularProgressIndicator()
-                    : ElevatedButton(
-              child: Text('cambiar contraseña'),
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => ChangePasswordScreen()),
+                      validator: (value) => value!.isEmpty || !value.contains('@')
+                          ? 'Correo inválido'
+                          : null,
+                    ),
+                    const SizedBox(height: 16),
+
+                    TextFormField(
+                      controller: _passwordController,
+                      obscureText: true,
+                      decoration: const InputDecoration(
+                        labelText: 'Contraseña',
+                        prefixIcon: Icon(Icons.lock),
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (value) => value!.isEmpty ? 'Campo requerido' : null,
+                    ),
+
+                    if (_errorMessage.isNotEmpty) ...[
+                      const SizedBox(height: 16),
+                      Text(_errorMessage, style: const TextStyle(color: Colors.red)),
+                    ],
+
+                    const SizedBox(height: 24),
+
+                    _isLoading
+                        ? const CircularProgressIndicator()
+                        : SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton.icon(
+                              icon: const Icon(Icons.login),
+                              label: const Text('Iniciar Sesión'),
+                              onPressed: _login,
+                            ),
+                          ),
+
+                    const SizedBox(height: 16),
+
+                    TextButton.icon(
+                      icon: const Icon(Icons.password),
+                      label: const Text('Cambiar contraseña'),
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) =>  ChangePasswordScreen()),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-              ],
             ),
           ),
         ),

@@ -20,11 +20,18 @@ class _ServicesScreenState extends State<ServicesScreen> {
   }
 
   Future<void> _cargarPosts() async {
-    final data = await PostService.fetchPosts();
-    setState(() {
-      _posts = data.take(20).toList(); // solo los primeros 20
-      _loading = false;
-    });
+    try {
+      final data = await PostService.fetchPosts();
+      setState(() {
+        _posts = data.take(20).toList(); // Solo los primeros 20
+        _loading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _loading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error al cargar los datos')));
+    }
   }
 
   void _mostrarDialogo({Post? post}) {
@@ -85,15 +92,26 @@ class _ServicesScreenState extends State<ServicesScreen> {
               itemCount: _posts.length,
               itemBuilder: (_, i) {
                 final post = _posts[i];
-                return ListTile(
-                  title: Text(post.title),
-                  subtitle: Text(post.body),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(icon: Icon(Icons.edit), onPressed: () => _mostrarDialogo(post: post)),
-                      IconButton(icon: Icon(Icons.delete), onPressed: () => _eliminar(post.id)),
-                    ],
+                return Card(
+                  margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  elevation: 5,
+                  child: ListTile(
+                    contentPadding: EdgeInsets.all(16),
+                    title: Text(post.title, style: Theme.of(context).textTheme.titleLarge),
+                    subtitle: Text(post.body),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.edit),
+                          onPressed: () => _mostrarDialogo(post: post),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.delete),
+                          onPressed: () => _eliminar(post.id),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },
