@@ -33,7 +33,7 @@ final url = Uri.parse('http://localhost:3000/api/auth/login');
 
 flutter run -d chrome
 
-
+https://github.com/JoeVieyra/flutter_web/blob/ab0a26c3043fd3489199b89df742d51ca6a02877/Captura%20desde%202025-05-04%2013-57-38.png
 
 ## 🔧 Instalación
 
@@ -42,4 +42,4 @@ git clone https://github.com/JoeVieyra/flutter_web
 cd flutter_web
 flutter pub get
 
-Captura desde 2025-05-04 13-57-38.png
+
