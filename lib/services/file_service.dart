@@ -6,7 +6,7 @@ class FileService {
   static const String baseUrl = 'http://localhost:3000/api/files';
 
  static Future<bool> uploadFile(PlatformFile file) async {
-    final uri = Uri.parse('$baseUrl/upload'); // Cambia por tu ruta de upload
+    final uri = Uri.parse('$baseUrl/upload'); 
 
     try {
       // Crear una solicitud Multipart
@@ -15,7 +15,7 @@ class FileService {
 
       // Añadir el archivo usando los bytes
       request.files.add(http.MultipartFile.fromBytes(
-        'archivo', // Este es el nombre del campo en tu formulario en backend
+        'archivo', 
         file.bytes!,
         filename: file.name, // Nombre original del archivo
       ));
