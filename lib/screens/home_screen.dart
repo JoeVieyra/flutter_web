@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_web/screens/colaboradores_screen.dart';
+import 'package:flutter_web/screens/colaborador_form_screen.dart';
+import 'package:flutter_web/screens/empleado_screen.dart';
 import 'package:flutter_web/screens/file_upload_screen.dart';
 import 'package:flutter_web/screens/services_screen.dart';
 
 class HomeScreen extends StatelessWidget {
-  final String userId;
+  final String nombre;
 
-  const HomeScreen({super.key, required this.userId});
+  const HomeScreen({super.key, required this.nombre});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +18,7 @@ class HomeScreen extends StatelessWidget {
           padding: EdgeInsets.zero,
           children: [
             DrawerHeader(
-              child: Text('Bienvenido, usuario: $userId'),
+              child: Text('Bienvenido: $nombre'),
               decoration: BoxDecoration(color: Colors.blue),
             ),
             ListTile(
@@ -33,7 +34,14 @@ class HomeScreen extends StatelessWidget {
               title: Text('Colaboradores'),
               onTap: () {Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => const ColaboradoresScreen()),
+            MaterialPageRoute(builder: (_) => const ColaboradorFormScreen()),
+            );},
+            ),
+            ListTile(
+              title: Text('Empleados'),
+              onTap: () {Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const EmpleadosScreen()),
             );},
             ),
             ListTile(

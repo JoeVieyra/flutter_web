@@ -13,6 +13,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _nombreController = TextEditingController();
   final _correoController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -27,6 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
       });
 
       final result = await AuthService.loginUser(
+        nombre: _nombreController.text,
         email: _correoController.text,
         password: _passwordController.text,
       );
@@ -40,7 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
           // ignore: use_build_context_synchronously
           context,
           MaterialPageRoute(
-            builder: (context) => HomeScreen(userId: result['userId']),
+            builder: (context) => HomeScreen(nombre: result['nombre']?.toString() ?? ''),
 
           ),
         );
