@@ -1,5 +1,4 @@
 
-```markdown
 # 🌐 Flutter Web - Interfaz de Autenticación y Gestión
 
 Este proyecto Flutter Web es la interfaz de usuario para autenticar usuarios, gestionar empleados y consumir publicaciones desde una API. Compatible con cualquier navegador moderno.
